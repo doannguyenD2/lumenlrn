@@ -28,13 +28,15 @@ class UserController extends Controller
             'username'=> 'required|string|unique:users',
             'password' => 'required|string',
         ];
-        $this->validate($request,$rules);
+        $validate = $this->validate($request,$rules, ['email.required' => 'We need to know your e-mail address!',]);
+        if($validate->fails()) return response()->json(['wwrong paramenter'],100);
         $user = new User([
             'name' => $request->name,
             'username'=> $request->username,
             'email' => $request->email,
             'password' => Hash::make($request->password)
         ]);
+        
         $user->save();
         return response()->json([
             'message' => 'Successfully created user!'
